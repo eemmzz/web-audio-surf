@@ -51,6 +51,7 @@
 
         // parameters: name, alpha, beta, radius, target position, scene
         var camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 2.75, Math.PI * 2, new BABYLON.Vector3(0, 2, 0), scene);
+        camera.attachControl(canvas, true);
 
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0));
 
@@ -63,11 +64,35 @@
         rocket.position.y = 1;
         rocket.rotation.z = Math.PI / 2;
 
-        // create basic floor/track
-        const ground = BABYLON.MeshBuilder.CreateGround("ground", {
+        // create basic track
+        const track = BABYLON.MeshBuilder.CreateGround("track", {
           width: 20,
           height: 10
         });
+
+        // create a particle system
+        var particleSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
+        particleSystem.emitter = new BABYLON.Vector3(0, 1, 0); // the starting location
+        particleSystem.emitRate = 1000;
+
+        // emit speed
+        particleSystem.minEmitPower = 0.2;
+        particleSystem.maxEmitPower = 0.5;
+        particleSystem.updateSpeed = 0.08;
+
+        particleSystem.particleTexture = new BABYLON.Texture("https://playground.babylonjs.com/textures/Flare.png", scene);
+
+        particleSystem.color1 = new BABYLON.Color4(0.97, 0.04, 0.04);
+        particleSystem.color2 = new BABYLON.Color4(0.98, 1, 0);
+        particleSystem.colorDead = new BABYLON.Color4(0.4, 0, 0, 0);
+
+        particleSystem.minSize = 0.1;
+        particleSystem.maxSize = 0.2;
+        particleSystem.minLifeTime = 0.15;
+        particleSystem.maxLifeTime = 0.25;
+
+        particleSystem.createPointEmitter(new BABYLON.Vector3(35, -4, -3), new BABYLON.Vector3(35, 4, 3));
+        particleSystem.start();
 
         return scene;
       }
