@@ -64,11 +64,21 @@
         rocket.position.y = 1;
         rocket.rotation.z = Math.PI / 2;
 
+        // rocket material
+        const rocketMat = new BABYLON.StandardMaterial("rocketMaterial");
+        rocketMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+        rocket.material = rocketMat;
+
         // create basic track
         const track = BABYLON.MeshBuilder.CreateGround("track", {
           width: 20,
           height: 10
         });
+
+        // track material
+        const trackMat = new BABYLON.StandardMaterial("trackMaterial");
+        trackMat.diffuseColor = new BABYLON.Color3(0.05, 0.05, 0.05);
+        track.material = trackMat;
 
         // create a particle system
         var particleSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
