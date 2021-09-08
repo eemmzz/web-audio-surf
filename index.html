@@ -106,7 +106,7 @@
         particleSystem.maxLifeTime = 0.25;
 
         const particleVectorD1 = new BABYLON.Vector3(5, -30, 5);
-        const particleVectorD2 = new BABYLON.Vector3(5, -30, -5);
+        const particleVectorD2 = new BABYLON.Vector3(-5, -30, -5);
         particleSystem.createPointEmitter(particleVectorD1, particleVectorD2);
         particleSystem.start();
 
