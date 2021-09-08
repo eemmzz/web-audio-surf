@@ -49,6 +49,7 @@
       var keyPressed = false;
       var rocketMaxZ = 2, rocketMinZ = -2, rocketStepZ = 2;
       var animationFrameRate = 10;
+      var music = null;
 
       const createScene =  () => {
         const scene = new BABYLON.Scene(engine);
@@ -83,6 +84,15 @@
         // create test collision box
         const box = BABYLON.MeshBuilder.CreateBox("box", { width: 0.6, height: 0.5, depth: 0.75 }, scene);
         box.position = new BABYLON.Vector3(0, 1, 2);
+
+        // sound
+        music = new BABYLON.Sound(
+          "trackMusic",
+          "http://localhost:8080/audio/Pump.mp3",
+          scene,
+          null,
+          { loop: false, autoplay: false }
+        );
 
         // test box material
         const boxMat = new BABYLON.StandardMaterial('boxMaterial');
@@ -131,7 +141,7 @@
           switch (kbInfo.type) {
             case BABYLON.KeyboardEventTypes.KEYDOWN:
               if (!keyPressed) {
-                //console.log("KEY DOWN: ", kbInfo.event.key);
+                //console.log("KEY DOWN: ", kbInfo.event.keyCode);
                 keyPressed = true;
 
                 if (kbInfo.event.key === 'ArrowLeft' || kbInfo.event.key === 'a') {
@@ -140,6 +150,15 @@
                 } else if (kbInfo.event.key === 'ArrowRight' || kbInfo.event.key === 'd') {
                   console.log('Go right');
                   moveRocket('right');
+                } else if (kbInfo.event.keyCode === 32) { // space bar
+                  console.log(music.isPlaying);
+                  if (music.isPlaying && !music.isPaused) {
+                    music.pause()
+                  } else if (music.isPaused) {
+                    music.play();
+                  } else {
+                    music.play();
+                  }
                 }
               }
 
@@ -163,6 +182,15 @@
             box.material.diffuseColor = new BABYLON.Color4(0, 0.7, 1, 1);
           }
         });
+
+        // GUI
+        const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        const textStart = new BABYLON.GUI.TextBlock();
+        textStart.text = "Press SPACE to play music";
+        textStart.color = "white";
+        textStart.fontSize = 24;
+        textStart.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        advancedTexture.addControl(textStart);
 
         return scene;
       }
