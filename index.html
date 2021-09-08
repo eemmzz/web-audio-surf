@@ -81,8 +81,7 @@
         rocket.animations.push(ySlide);
 
         // create test collision box
-        const cubeSize = 0.6;
-        const box = BABYLON.MeshBuilder.CreateBox("box", { width: cubeSize, height: cubeSize, depth: cubeSize }, scene);
+        const box = BABYLON.MeshBuilder.CreateBox("box", { width: 0.6, height: 0.5, depth: 0.75 }, scene);
         box.position = new BABYLON.Vector3(0, 1, 2);
 
         // test box material
