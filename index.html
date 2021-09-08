@@ -44,7 +44,10 @@
       var engine = null;
       var scene = null;
       var sceneToRender = null;
+      var rocket = null;
       var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false }); };
+      var keyPressed = false;
+      var rocketMaxZ = 2, rocketMinZ = -2, rocketStepZ = 2;
 
       const createScene =  () => {
         const scene = new BABYLON.Scene(engine);
@@ -56,12 +59,13 @@
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0));
 
         // create audio surf rocket
-        const rocket = BABYLON.MeshBuilder.CreateCylinder("rocket", {
+        rocket = BABYLON.MeshBuilder.CreateCylinder("rocket", {
           height: 1,
           diameterTop: 0,
           diameterBottom: 0.5
         });
         rocket.position.y = 1;
+        rocket.position.z = 0;
         rocket.rotation.z = Math.PI / 2;
 
         // rocket material
@@ -82,7 +86,7 @@
 
         // create a particle system
         var particleSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
-        particleSystem.emitter = new BABYLON.Vector3(0, 1, 0); // the starting location
+        particleSystem.emitter = rocket;
         particleSystem.emitRate = 1000;
 
         // emit speed
@@ -101,11 +105,58 @@
         particleSystem.minLifeTime = 0.15;
         particleSystem.maxLifeTime = 0.25;
 
-        particleSystem.createPointEmitter(new BABYLON.Vector3(35, -4, -3), new BABYLON.Vector3(35, 4, 3));
+        const particleVectorD1 = new BABYLON.Vector3(5, -30, 5);
+        const particleVectorD2 = new BABYLON.Vector3(5, -30, -5);
+        particleSystem.createPointEmitter(particleVectorD1, particleVectorD2);
         particleSystem.start();
+
+        // add controls
+        scene.onKeyboardObservable.add((kbInfo) => {
+          switch (kbInfo.type) {
+            case BABYLON.KeyboardEventTypes.KEYDOWN:
+              if (!keyPressed) {
+                //console.log("KEY DOWN: ", kbInfo.event.key);
+                keyPressed = true;
+
+                if (kbInfo.event.key === 'ArrowLeft' || kbInfo.event.key === 'a') {
+                  console.log('Go left');
+                  moveRocket('left');
+                } else if (kbInfo.event.key === 'ArrowRight' || kbInfo.event.key === 'd') {
+                  console.log('Go right');
+                  moveRocket('right');
+                }
+              }
+
+              break;
+            case BABYLON.KeyboardEventTypes.KEYUP:
+              keyPressed = false;
+              //console.log("KEY UP: ", kbInfo.event.key);
+              break;
+          }
+        });
 
         return scene;
       }
+
+      const moveRocket = async (direction) => {
+        console.log('*****', direction);
+
+        if (direction === 'left') {
+          if (rocket.position.z <= rocketMinZ) {
+            // don't move else you'll go off the track
+            return;
+          } else {
+            rocket.position.z -= rocketStepZ;
+          }
+        } else {
+          if (rocket.position.z >= rocketMaxZ) {
+            // don't move else you'll go off the track
+            return;
+          } else {
+            rocket.position.z += rocketStepZ;
+          }
+        }
+      };
 
       window.initFunction = async function () {
         var asyncEngineCreation = async function () {
