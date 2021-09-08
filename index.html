@@ -39,7 +39,7 @@
   <body>
     <canvas id="renderCanvas"></canvas>
     <script>
-      const canvas = document.getElementById("renderCanvas");
+      const canvas = document.getElementById('renderCanvas');
 
       var engine = null;
       var scene = null;
@@ -48,18 +48,19 @@
       var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false }); };
       var keyPressed = false;
       var rocketMaxZ = 2, rocketMinZ = -2, rocketStepZ = 2;
+      var animationFrameRate = 10;
 
       const createScene =  () => {
         const scene = new BABYLON.Scene(engine);
 
         // parameters: name, alpha, beta, radius, target position, scene
-        var camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 2.75, Math.PI * 2, new BABYLON.Vector3(0, 2, 0), scene);
-        camera.attachControl(canvas, true);
+        var camera = new BABYLON.ArcRotateCamera('camera', 0, Math.PI / 2.75, Math.PI * 2, new BABYLON.Vector3(0, 2, 0), scene);
+        //camera.attachControl(canvas, true);
 
-        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0));
+        const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0));
 
         // create audio surf rocket
-        rocket = BABYLON.MeshBuilder.CreateCylinder("rocket", {
+        rocket = BABYLON.MeshBuilder.CreateCylinder('rocket', {
           height: 1,
           diameterTop: 0,
           diameterBottom: 0.5
@@ -69,23 +70,29 @@
         rocket.rotation.z = Math.PI / 2;
 
         // rocket material
-        const rocketMat = new BABYLON.StandardMaterial("rocketMaterial");
+        const rocketMat = new BABYLON.StandardMaterial('rocketMaterial');
         rocketMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
         rocket.material = rocketMat;
 
+        // create bobbing animation for rocket
+        const ySlide = createRocketAnimation();
+
+        // add animation to rocket
+        rocket.animations.push(ySlide);
+
         // create basic track
-        const track = BABYLON.MeshBuilder.CreateGround("track", {
+        const track = BABYLON.MeshBuilder.CreateGround('track', {
           width: 20,
           height: 10
         });
 
         // track material
-        const trackMat = new BABYLON.StandardMaterial("trackMaterial");
+        const trackMat = new BABYLON.StandardMaterial('trackMaterial');
         trackMat.diffuseColor = new BABYLON.Color3(0.05, 0.05, 0.05);
         track.material = trackMat;
 
         // create a particle system
-        var particleSystem = new BABYLON.ParticleSystem("particles", 1000, scene);
+        var particleSystem = new BABYLON.ParticleSystem('particles', 1000, scene);
         particleSystem.emitter = rocket;
         particleSystem.emitRate = 1000;
 
@@ -94,7 +101,7 @@
         particleSystem.maxEmitPower = 0.5;
         particleSystem.updateSpeed = 0.08;
 
-        particleSystem.particleTexture = new BABYLON.Texture("https://playground.babylonjs.com/textures/Flare.png", scene);
+        particleSystem.particleTexture = new BABYLON.Texture('https://playground.babylonjs.com/textures/Flare.png', scene);
 
         particleSystem.color1 = new BABYLON.Color4(0.97, 0.04, 0.04);
         particleSystem.color2 = new BABYLON.Color4(0.98, 1, 0);
@@ -135,12 +142,44 @@
           }
         });
 
+        // start rocket animation
+        scene.beginAnimation(rocket, 0, 2 * animationFrameRate, true);
+
         return scene;
       }
 
-      const moveRocket = async (direction) => {
-        console.log('*****', direction);
+      const createRocketAnimation = () => {
+        const ySlide = new BABYLON.Animation(
+          'ySlide',
+          'position.y',
+          animationFrameRate,
+          BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+          BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+        );
 
+        const keyFrames = [];
+        keyFrames.push({
+          frame: 0,
+          value: 1.1
+        });
+        keyFrames.push({
+          frame: animationFrameRate,
+          value: 0.9
+        });
+        keyFrames.push({
+          frame: 2 * animationFrameRate,
+          value: 1.1
+        });
+        ySlide.setKeys(keyFrames);
+
+        const easingFunction = new BABYLON.SineEase();
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+        ySlide.setEasingFunction(easingFunction);
+
+        return ySlide;
+      };
+
+      const moveRocket = (direction) => {
         if (direction === 'left') {
           if (rocket.position.z <= rocketMinZ) {
             // don't move else you'll go off the track
@@ -184,7 +223,7 @@
       });
 
       // Resize
-      window.addEventListener("resize", function () {
+      window.addEventListener('resize', function () {
         engine.resize();
       });
     </script>
