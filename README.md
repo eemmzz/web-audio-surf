@@ -4,6 +4,7 @@ A basic version of AudioSurf with BabylonJS.
 
 ## todo:
 
+* create asset server locally with NPM to avoid file:// CORS issues
 * create cube and test collision
 * parse music track to get length - decide on music seconds -> mesh unit size in game
 * once unit size is known update track length
@@ -18,3 +19,4 @@ A basic version of AudioSurf with BabylonJS.
 * add in another type of shape which is negative if player touches (subtracts score)
 * based on tempo of track change cube colours so "faster/harder" sections get more points
 * add random height mapping to track so it looks cooler?
+* background effects whenever player correctly hits a cube
