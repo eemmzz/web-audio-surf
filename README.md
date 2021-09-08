@@ -15,7 +15,6 @@ If you're on Mac and have Google Chrome installed you can instead run `npm start
 
 ## todo:
 
-* create cube and test collision
 * parse music track to get length - decide on music seconds -> mesh unit size in game
 * once unit size is known update track length
 * check how to play audio - play file

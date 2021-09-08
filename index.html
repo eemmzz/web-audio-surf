@@ -80,6 +80,16 @@
         // add animation to rocket
         rocket.animations.push(ySlide);
 
+        // create test collision box
+        const cubeSize = 0.6;
+        const box = BABYLON.MeshBuilder.CreateBox("box", { width: cubeSize, height: cubeSize, depth: cubeSize }, scene);
+        box.position = new BABYLON.Vector3(0, 1, 2);
+
+        // test box material
+        const boxMat = new BABYLON.StandardMaterial('boxMaterial');
+        boxMat.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        box.material = boxMat;
+
         // create basic track
         const track = BABYLON.MeshBuilder.CreateGround('track', {
           width: 20,
@@ -144,6 +154,16 @@
 
         // start rocket animation
         scene.beginAnimation(rocket, 0, 2 * animationFrameRate, true);
+
+        // setup collision test
+        scene.registerAfterRender(() => {
+          if (rocket.intersectsMesh(box, false)) {
+            // todo: remove on hit and increment score
+            box.material.diffuseColor = new BABYLON.Color4(1, 0, 0, 1);
+          } else {
+            box.material.diffuseColor = new BABYLON.Color4(0, 0.7, 1, 1);
+          }
+        });
 
         return scene;
       }
