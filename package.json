@@ -1,0 +1,28 @@
+{
+  "name": "web-audio-surf",
+  "version": "1.0.0",
+  "description": "A basic version of AudioSurf with BabylonJS.",
+  "private": true,
+  "main": "",
+  "scripts": {
+    "serve-assets": "npx http-server ./assets --cors",
+    "serve-assets-background": "npx http-server ./assets --cors &",
+    "open-chrome": "open -a \"Google Chrome\" ./index.html",
+    "kill-asset-process": "kill $(lsof -t -i:8080)",
+    "start": "npm run serve-assets-background && npm run open-chrome",
+    "test": "echo \"no tests\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eemmzz/web-audio-surf.git"
+  },
+  "author": "Emma Young",
+  "license": "BSC 3 Clause",
+  "bugs": {
+    "url": "https://github.com/eemmzz/web-audio-surf/issues"
+  },
+  "homepage": "https://github.com/eemmzz/web-audio-surf#readme",
+  "dependencies": {
+    "http-server": "^13.0.1"
+  }
+}
