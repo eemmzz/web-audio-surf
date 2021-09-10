@@ -49,7 +49,7 @@
       var keyPressed = false;
       var rocketMaxZ = 2, rocketMinZ = -2, rocketStepZ = 2;
       var animationFrameRate = 10;
-      var music = null;
+      var beep, music = null;
 
       const createScene =  () => {
         const scene = new BABYLON.Scene(engine);
@@ -85,10 +85,20 @@
         const box = BABYLON.MeshBuilder.CreateBox("box", { width: 0.6, height: 0.5, depth: 0.75 }, scene);
         box.position = new BABYLON.Vector3(0, 1, 2);
 
-        // sound
+        // sound exists to bring up browser un-mute prompt
+        beep = new BABYLON.Sound(
+          "trackMusic",
+          "http://localhost:8080/audio/Beep.mp3",
+          scene,
+          null,
+          { loop: false, autoplay: true }
+        );
+        beep.setVolume(0);
+
+        // sound track for course
         music = new BABYLON.Sound(
           "trackMusic",
-          "http://localhost:8080/audio/Pump.mp3",
+          "http://localhost:8080/audio/DarudeSandstormSample.mp3",
           scene,
           null,
           { loop: false, autoplay: false }
